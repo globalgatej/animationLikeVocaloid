@@ -2,7 +2,11 @@
 
 @import url('https://fonts.googleapis.com/css?family=Noto+Serif+JP:700&display=swap');
 
+
 /* 最低限のデザイン用 */
+body {
+    line-height: 1.5;
+}
 #globalheader {
     padding: 40px 20px;
 }
