@@ -1,0 +1,121 @@
+@charset 'utf-8';
+
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif+JP:700&display=swap');
+
+/* 最低限のデザイン用 */
+#globalheader {
+    padding: 40px 20px;
+}
+#globalheader h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+#keyvisual {
+    position: relative;
+    height: 600px;
+    background: #000;
+}
+.keyvisual_item {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-position: center center;
+    background-size: cover;
+}
+.keyvisual_item p {
+    font-family: "Noto Serif JP", "BIZ UDPMincho","ヒラギノ明朝 ProN W6", "HiraMinProN-W6", "HG明朝E", serif;
+    font-weight: 700;
+    color: #fff;
+    font-size: 3rem;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 50%;
+    margin-top: -1rem;
+    text-align: center;
+}
+main {
+    padding: 20px;
+}
+main p:not(:last-child) {
+    margin-bottom: 1rem;
+}
+#copy {
+    text-align: center;
+
+}
+
+/* loading用 */
+.keyvisual_loading {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #222;
+    display: flex;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+.loading_item {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    animation: loading 0.5s linear infinite;
+}
+@keyframes loading {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+body.loaded .loading_item {
+    animation: loading_end 1s linear;
+}
+@keyframes loading_end {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+body.loading_end .loading_item {
+    animation: loading_finish 0.4s linear forwards;
+}
+@keyframes loading_finish {
+    0% {
+        opacity: 1;
+        height: 30px;
+        width: 30px;
+    }
+    50% {
+        opacity: 1;
+        height: 30px;
+        width: 100%;
+    }
+    100% {
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+
+
+/* アニメーション用の初期設定 */
+
+.keyvisual_item p span {
+    display: inline-block;
+    transform: scale(0);
+    position: relative;
+}
+.keyvisual_item p span:not(:last-child) {
+    margin-right: 1vw;
+}

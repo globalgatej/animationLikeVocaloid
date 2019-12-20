@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>
+        anime.js（とjQueryとちょっとだけCSS）によるボカロ動画みたいなアニメーションキービジュアル
+    </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header id="globalheader">
+        <h1>ロゴ的なもの</h1>
+    </header>
+    <div id="keyvisual">
+        <div class="keyvisual_main">
+            <div class="keyvisual_item" style="background-image: url(img1.jpg)">
+                <p>いつからこんなに大きな</p>
+            </div>
+            <div class="keyvisual_item" style="background-image: url(img2.jpg)">
+                <p>思い出せない記憶があったか</p>
+            </div>
+            <div class="keyvisual_item" style="background-image: url(img3.jpg)">
+                <p>どうにも憶えてないのを</p>
+            </div>
+            <div class="keyvisual_item" style="background-image: url(img4.jpg)">
+                <p>ひとつ確かに憶えてるんだな</p>
+            </div>
+
+            <div class="keyvisual_item" style="background-image: url(img1.jpg)">
+                <p>もう一回何回やったって</p>
+            </div>
+            <div class="keyvisual_item" style="background-image: url(img2.jpg)">
+                <p>思い出すのはその顔だ</p>
+            </div>
+            <div class="keyvisual_item" style="background-image: url(img3.jpg)">
+                <p>それでもあなたがなんだか</p>
+            </div>
+            <div class="keyvisual_item" style="background-image: url(img4.jpg)">
+                <p>思い出せないままでいるんだな</p>
+            </div>
+        </div>
+
+        <div class="keyvisual_loading">
+            <div class="loading_item"></div>
+        </div>
+    </div>
+    <main>
+        <p>ああああああああ</p>
+        <p>このあたりにメインコンテンツ的な</p>
+        <p>このあたりにメインコンテンツ的な</p>
+        <p>このあたりにメインコンテンツ的な</p>
+        <p>このあたりにメインコンテンツ的な</p>
+        <p>このあたりにメインコンテンツ的な</p>
+        <p>このあたりにメインコンテンツ的な</p>
+    </main>
+    <footer id="globalfooter">
+
+        <p id="copy">&copy; GlobalGate.co.,ltd.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+
+    <script>
+        (function ($) {
+            //下準備
+            //定義とか取得とか
+            const $keyvisual = $('.keyvisual_main');
+            const $item = $keyvisual.find('.keyvisual_item'); //スライドショーの1枚
+            const num = $item.length; //枚数
+
+            //順番を逆にする（ほうがHTML上分かりやすいと思う）
+            $keyvisual.empty();
+            $keyvisual.append($item.get().reverse());
+
+            //文字（p）を1個ずつspanで囲う
+            $item.find('p').each(function (key, value) {
+                var text = $(this).get(0).textContent;
+                var textOut = '';
+                var textArr = text.split('');
+                var textNum = textArr.length;
+                $.each(textArr, function (key, value) {
+                    //ウインドウ内に収まるように文字サイズを調整
+                    textOut += '<span style="font-size: ' + 70 / textNum + 'vw">' + value + '</span>';
+                });
+                $(this).empty();
+                $(this).html(textOut);
+            });
+
+
+
+            //アニメーション
+            //空タイムラインを定義し、addしていく方法が分かりやすくておすすめ
+            const timeLine = anime.timeline({
+                loop: true,
+                autoplay: false // 停止状態でアニメなどを構築しておく
+            });
+
+            $item.each(function (key, value) {
+                timeLine.add({
+                    //文字のアニメーション
+                    targets: $(value).find('p span').get(),
+                    //1個おきに大きかったり小さかったり角度を付けたり
+                    scale: function (el, index) {
+                        return index % 2 ? [0, 1] : [0, 1.5]
+                    },
+                    rotate: function (el, index) {
+                        return index % 2 ? [15, 15] : [-15, -15]
+                    },
+                    easing: 'easeOutCubic',
+                    duration: 400,
+                    //1文字ずつ200ミリ秒遅延させる
+                    delay: anime.stagger(150)
+                }).add({
+                    //文字が全部表示されたら文字を消す
+                    targets: $(value).find('p span').get(),
+                    opacity: 0,
+                    //1文字ずつ交互に上下に動く
+                    top: function (el, index) {
+                        return index % 2 ? '1em' : '-1em';
+                    },
+                    scale: '+=1.2',
+                    easing: 'easeOutCubic',
+                    duration: 600
+
+                }, '-=100').add({
+                    //ステージのフェードアウト
+                    targets: $(value).get(0),
+                    opacity: {
+                        value: 0,
+                        easing: 'linear'
+                    },
+                    duration: 400,
+                    //順番を入れ替えて裏にもっていく
+                    complate: function () {
+                        $(this).append($(this).parent()).css('opacity', 1);
+                    }
+                });
+            });
+
+            //DOM構築や下準備完了
+            $(window).on('load', function () {
+                $('body').addClass('loaded');
+                $(document).on('animationend', 'body.loaded .loading_item', function () {
+                    $('body').addClass('loading_end');
+                });
+                $(document).on('animationend', 'body.loading_end .loading_item', function () {
+                    $('body').addClass('loading_done');
+                    $('.keyvisual_loading').fadeOut('slow').promise().done(function () {
+                        $(this).remove();
+                        timeLine.play();
+                    });
+                });
+
+            });
+
+
+
+
+
+
+
+        })(jQuery);
+
+
+
+    </script>
+</body>
+
+</html>
